@@ -1,21 +1,40 @@
 'use client';
 import { useSignatureContext } from '@/contexts/SignatureContext';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 function ListSignaturesComponent() {
-	const { signatures } = useSignatureContext();
+	const { signatures, removeSignatureById } = useSignatureContext();
+	const [signatureExists, setSignatureExists] = useState(false);
 
-	console.log({ signatures });
+	useEffect(() => {
+		if (signatures.length && !signatureExists) setSignatureExists(true);
+		if (!signatures.length && signatureExists) setSignatureExists(false);
+	}, [signatureExists, signatures]);
+
+	const handleDeleteClick = (id) => {
+		removeSignatureById(id);
+	};
 
 	return (
 		<div className="flex flex-wrap justify-center">
-			{signatures.map((signature, index) => (
+			{!signatureExists && (
+				<div className="flex flex-col flex-wrap">
+					<p className="text-lg mb-3">Aucune signature pour le moment.</p>
+					<Link href="/create">
+						<div className="bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 m-2 rounded">
+							Créer une signature
+						</div>
+					</Link>
+				</div>
+			)}
+			{signatures.map((signature) => (
 				<div
-					key={index}
+					key={signature.id}
 					className="max-w-sm mx-4 my-4 rounded overflow-hidden shadow-lg"
 				>
 					<div className="p-4">
-						{/* Photo de l'utilisateur */}
 						{signature.personPhoto && (
 							<div className="mb-4">
 								<Image
@@ -27,8 +46,6 @@ function ListSignaturesComponent() {
 								/>
 							</div>
 						)}
-
-						{/* Logo de l'entreprise */}
 						{signature.companyLogo && (
 							<div className="mb-4">
 								<Image
@@ -40,8 +57,6 @@ function ListSignaturesComponent() {
 								/>
 							</div>
 						)}
-
-						{/* Détails de la signature */}
 						<div className="text-center">
 							<p>
 								<strong>Intitulé du poste:</strong> {signature.jobTitle}
@@ -52,6 +67,14 @@ function ListSignaturesComponent() {
 							<p>
 								<strong>Champ Personnalisé:</strong> {signature.customField}
 							</p>
+						</div>
+						<div className="text-center mt-auto">
+							<button
+								onClick={() => handleDeleteClick(signature.id)}
+								className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+							>
+								Supprimer
+							</button>
 						</div>
 					</div>
 				</div>

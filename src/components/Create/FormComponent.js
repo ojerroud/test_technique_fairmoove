@@ -1,20 +1,21 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSignatureContext } from '@/contexts/SignatureContext';
-import NextImage from 'next/image';
+import { v4 as uuidv4 } from 'uuid';
+import SignaturePreviewComponent from '@/components/Create/SignaturePreviewComponent';
+
+const initFormData = {
+	personPhoto: null,
+	companyLogo: null,
+	jobTitle: '',
+	phoneNumber: '',
+	customField: '',
+};
 
 function FormComponent() {
+	const formRef = useRef(null);
 	const { addSignature } = useSignatureContext();
 	const [isCreating, setIsCreating] = useState(false); // affiche la card quand on commence a "remplir" le signature
-
-	const initFormData = {
-		personPhoto: null,
-		companyLogo: null,
-		jobTitle: '',
-		phoneNumber: '',
-		customField: '',
-	};
-
 	const [formData, setFormData] = useState(initFormData);
 
 	const handleInputChange = (event) => {
@@ -66,7 +67,10 @@ function FormComponent() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
+		const uniqueID = uuidv4();
+
 		const newSignature = {
+			id: uniqueID,
 			personPhoto: formData.personPhoto,
 			companyLogo: formData.companyLogo,
 			jobTitle: formData.jobTitle,
@@ -76,14 +80,18 @@ function FormComponent() {
 
 		addSignature(newSignature);
 
+		/**reset formData values, isCreating & form */
 		setFormData(initFormData);
 		setIsCreating(false);
+		formRef.current.reset();
 	};
 
 	return (
 		<div>
+			{/** formulaire pour generer une signature */}
 			<form
 				onSubmit={handleSubmit}
+				ref={formRef}
 				className="max-w-md mx-auto p-4 bg-gray-100 rounded-md shadow-md"
 			>
 				<div className="mb-4">
@@ -165,55 +173,7 @@ function FormComponent() {
 					Enregistrer
 				</button>
 			</form>
-			{/* Affichage de la prévisualisation de la signature */}
-			{isCreating && (
-				<div className="max-w-md mx-auto mt-8 p-4 border border-gray-300 rounded-lg shadow-md">
-					<h3 className="text-center mb-4 text-lg font-semibold">
-						Prévisualisation de la signature:
-					</h3>
-
-					{/* Photo de l'utilisateur */}
-					{formData.personPhoto && (
-						<div className="flex justify-center items-center mb-4">
-							<div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-gray-400">
-								<NextImage
-									src={URL.createObjectURL(formData.personPhoto)}
-									alt="Photo utilisateur"
-									width={80}
-									height={80}
-								/>
-							</div>
-						</div>
-					)}
-
-					{/* Logo de l'entreprise */}
-					{formData.companyLogo && (
-						<div className="flex justify-center mb-4">
-							<div className="relative w-16 h-16 overflow-hidden">
-								<NextImage
-									src={URL.createObjectURL(formData.companyLogo)}
-									alt="Logo entreprise"
-									width={40}
-									height={40}
-								/>
-							</div>
-						</div>
-					)}
-
-					{/* Détails de la signature */}
-					<div className="text-center">
-						<p>
-							<strong>Intitulé du poste:</strong> {formData.jobTitle}
-						</p>
-						<p>
-							<strong>Téléphone:</strong> {formData.phoneNumber}
-						</p>
-						<p>
-							<strong>Champ Personnalisé:</strong> {formData.customField}
-						</p>
-					</div>
-				</div>
-			)}
+			<SignaturePreviewComponent formData={formData} isCreating={isCreating} />
 		</div>
 	);
 }

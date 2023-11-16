@@ -15,14 +15,14 @@ const Navbar = () => {
 				<li>
 					<Link href="/create">
 						<div className="text-white hover:bg-gray-700 mx-4 px-4 py-2 rounded cursor-pointer">
-							Create
+							Fabrique à Signature
 						</div>
 					</Link>
 				</li>
 				<li>
 					<Link href="/list">
 						<div className="text-white hover:bg-gray-700 mx-4 px-4 py-2 rounded cursor-pointer">
-							List
+							Liste des Signatures
 						</div>
 					</Link>
 				</li>

@@ -12,9 +12,16 @@ export const AppProvider = ({ children }) => {
 		setSignatures((prevSignatures) => [...prevSignatures, newSignature]);
 	};
 
+	const removeSignatureById = (id) => {
+		setSignatures((prevSignatures) =>
+			prevSignatures.filter((signature) => signature.id !== id)
+		);
+	};
+
 	const contextValue = {
 		signatures,
 		addSignature,
+		removeSignatureById,
 	};
 
 	return (

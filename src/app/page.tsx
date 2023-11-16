@@ -7,8 +7,10 @@ export default function Home() {
 			<header>
 				<Navbar />
 			</header>
-			<main className="container mx-auto mt-8">
-				<h1 className="text-4xl font-bold mb-4">Générateur de Signature</h1>
+			<main className="container mx-auto px-4 mt-8">
+				<h1 className="text-4xl font-bold text-center mb-4">
+					Générateur de Signature
+				</h1>
 				<p className="text-lg mb-6">
 					Bienvenue sur notre application de génération de signature de mail.
 					Créez et personnalisez facilement vos signatures pour vos e-mails
